@@ -45,9 +45,9 @@ public class RsController {
     rsList.add(rsEvent);
   }
 
-  @PutMapping("/rs/update/event/{index}")
-  public String updateRsEventByIndex(@PathVariable int index, @RequestBody RsEvent rsEvent) {
-    if (rsList.size() < index) {
+  @PutMapping("/rs/update/event")
+  public String updateRsEventByIndex(@RequestParam Integer index, @RequestBody RsEvent rsEvent) {
+    if (index == null || rsList.size() < index) {
       return "更新失败";
     }
     RsEvent thisRsEvent = rsList.get(index - 1);

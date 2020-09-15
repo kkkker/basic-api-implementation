@@ -113,23 +113,23 @@ class RsListApplicationTests {
         RsEvent rsEvent = new RsEvent("股市崩了", "经济");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/rs/update/event/3").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/rs/update/event?index=3").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("更新成功"));
 
         rsEvent = new RsEvent("猪肉涨价了", null);
         json = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/rs/update/event/2").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/rs/update/event?index=2").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("更新成功"));
 
         rsEvent = new RsEvent(null, "政治");
         json = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/rs/update/event/1").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/rs/update/event?index=1").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("更新成功"));
 
-        mockMvc.perform(put("/rs/update/event/4").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/rs/update/event?index=4").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("更新失败"));
 
