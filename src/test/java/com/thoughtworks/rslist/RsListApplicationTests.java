@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -141,5 +142,34 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[1].keyword", is("无分类")))
                 .andExpect(jsonPath("$[2].eventName", is("股市崩了")))
                 .andExpect(jsonPath("$[2].keyword", is("经济")));
+    }
+
+    @Test
+    void should_delete_rs_event_by_index() throws Exception {
+        mockMvc.perform(get("/rs/event"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+                .andExpect(jsonPath("$[0].keyword", is("无分类")))
+                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+                .andExpect(jsonPath("$[1].keyword", is("无分类")))
+                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
+                .andExpect(jsonPath("$[2].keyword", is("无分类")));
+
+        mockMvc.perform(delete("/rs/delete/event?index=4"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("删除失败"));
+
+        mockMvc.perform(delete("/rs/delete/event?index=3"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("删除成功"));
+
+        mockMvc.perform(get("/rs/event"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+                .andExpect(jsonPath("$[0].keyword", is("无分类")))
+                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+                .andExpect(jsonPath("$[1].keyword", is("无分类")));
     }
 }

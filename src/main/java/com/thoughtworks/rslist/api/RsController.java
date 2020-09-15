@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.RsEvent;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,5 +58,14 @@ public class RsController {
       thisRsEvent.setKeyword(rsEvent.getKeyword());
     }
     return "更新成功";
+  }
+
+  @DeleteMapping("/rs/delete/event")
+  public String deleteRsEventByIndex(@RequestParam(required = false) Integer index) {
+    if (index == null || rsList.size() < index) {
+      return "删除失败";
+    }
+    rsList.remove(index - 1);
+    return "删除成功";
   }
 }
