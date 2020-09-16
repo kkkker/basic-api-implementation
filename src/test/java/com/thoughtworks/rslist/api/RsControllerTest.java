@@ -329,4 +329,11 @@ class RsControllerTest {
                 .andExpect(jsonPath("$.error", is("invalid request param")));
     }
 
+    @Test
+    void should_checkout_index_when_get_rs_event_by_index() throws Exception {
+        mockMvc.perform(get("/rs/event/4"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid index")));
+    }
+
 }

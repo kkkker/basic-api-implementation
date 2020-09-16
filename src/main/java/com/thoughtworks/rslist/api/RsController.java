@@ -1,11 +1,10 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.RsEvent;
+import com.thoughtworks.rslist.exception.EventIndexException;
 import com.thoughtworks.rslist.exception.EventRangeException;
-import com.thoughtworks.rslist.exception.ExceptionMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +30,10 @@ public class RsController {
   }
 
   @GetMapping("/rs/event/{index}")
-  public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int index) {
+  public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int index) throws EventIndexException {
+    if (index > rsList.size()) {
+      throw new EventIndexException();
+    }
     return ResponseEntity.ok().body(rsList.get(index - 1));
   }
 
