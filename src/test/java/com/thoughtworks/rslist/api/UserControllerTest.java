@@ -21,7 +21,7 @@ class UserControllerTest {
 
     @Test
     void should_register_user() throws Exception {
-        User user = new User("小王", 19, "female", "a@twu.com", 18888888888L);
+        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -30,7 +30,7 @@ class UserControllerTest {
 
     @Test
     void user_name_should_no_empty() throws Exception {
-        User user = new User("", 19, "female", "a@twu.com", 18888888888L);
+        User user = new User("", 19, "female", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -39,7 +39,7 @@ class UserControllerTest {
 
     @Test
     void user_name_should_no_more_than_eight() throws Exception {
-        User user = new User("123456789", 19, "female", "a@twu.com", 18888888888L);
+        User user = new User("123456789", 19, "female", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -48,7 +48,7 @@ class UserControllerTest {
 
     @Test
     void gender_should_no_empty() throws Exception {
-        User user = new User("小王", 19, "", "a@twu.com", 18888888888L);
+        User user = new User("小王", 19, "", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -57,7 +57,7 @@ class UserControllerTest {
 
     @Test
     void age_should_no_empty() throws Exception {
-        User user = new User("小王", null, "female", "a@twu.com", 18888888888L);
+        User user = new User("小王", null, "female", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -66,7 +66,7 @@ class UserControllerTest {
 
     @Test
     void age_should_no_more_than_one_hundred() throws Exception {
-        User user = new User("小王", 101, "female", "a@twu.com", 18888888888L);
+        User user = new User("小王", 101, "female", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -75,7 +75,7 @@ class UserControllerTest {
 
     @Test
     void age_should_no_less_than_eighteen() throws Exception {
-        User user = new User("小王", 17, "female", "a@twu.com", 18888888888L);
+        User user = new User("小王", 17, "female", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -84,7 +84,7 @@ class UserControllerTest {
 
     @Test
     void email_should_legal() throws Exception {
-        User user = new User("小王", 19, "female", "@twu.com", 18888888888L);
+        User user = new User("小王", 19, "female", "@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -94,6 +94,15 @@ class UserControllerTest {
     @Test
     void phone_should_no_empty() throws Exception {
         User user = new User("小王", 19, "female", "a@twu.com", null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void phone_should_start_with_one_and_have_eleven_numbers() throws Exception {
+        User user = new User("小王", 19, "female", "a@twu.com", "28888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
