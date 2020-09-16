@@ -13,9 +13,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -74,7 +75,15 @@ class RsControllerTest {
     }
 
     @Test
+    void should_get_one_rs_event_without_user() throws Exception {
+        mockMvc.perform(get("/rs/event/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", not(hasKey("user"))));
+    }
+
+    @Test
     void should_add_one_rs_event() throws Exception {
+
         mockMvc.perform(get("/rs/event"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
@@ -85,10 +94,10 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
                 .andExpect(jsonPath("$[2].keyword", is("无分类")));
 
-        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("股市崩了", "经济", user);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEvent);
+        String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\"," +
+                "\"user\":{\"user_name\":\"小王\",\"user_age\":19,\"user_gender\":\"female\"," +
+                "\"user_email\":\"a@twu.com\",\"user_phone\":\"18888888888\"}}";
+        System.out.println(json);
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("index", is("4")));
@@ -105,6 +114,7 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[3].eventName", is("股市崩了")))
                 .andExpect(jsonPath("$[3].keyword", is("经济")));
 
+        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
         List<User> newUserList = UserController.userList;
         assertEquals(1, newUserList.size());
         assertEquals(user, newUserList.get(0));
@@ -113,16 +123,15 @@ class RsControllerTest {
     @Test
     void should_no_register_user_when_user_name_exist() throws Exception {
 
-        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("股市崩了", "经济", user);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEvent);
+        String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\"," +
+                "\"user\":{\"user_name\":\"小王\",\"user_age\":19,\"user_gender\":\"female\"," +
+                "\"user_email\":\"a@twu.com\",\"user_phone\":\"18888888888\"}}";
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
-        User repeatedUser = new User("小王", 20, "male", "abc@twu.com", "18888988888");
-        rsEvent = new RsEvent("猪肉涨价了", "民生", repeatedUser);
-        json = objectMapper.writeValueAsString(rsEvent);
+        json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\"," +
+                "\"user\":{\"user_name\":\"小王\",\"user_age\":20,\"user_gender\":\"male\"," +
+                "\"user_email\":\"abc@twu.com\",\"user_phone\":\"18888988888\"}}";
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
@@ -134,6 +143,7 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[4].eventName", is("猪肉涨价了")))
                 .andExpect(jsonPath("$[4].keyword", is("民生")));
 
+        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
         List<User> newUserList = UserController.userList;
         assertEquals(1, newUserList.size());
         assertEquals(user, newUserList.get(0));

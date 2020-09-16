@@ -1,6 +1,10 @@
 package com.thoughtworks.rslist.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -19,6 +23,16 @@ public class RsEvent {
     @NotNull
     @Valid
     private User user;
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @JsonProperty
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public RsEvent() {
     }
