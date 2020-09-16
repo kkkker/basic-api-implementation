@@ -158,6 +158,15 @@ class RsControllerTest {
     }
 
     @Test
+    void user_should_no_empty() throws Exception {
+        RsEvent rsEvent = new RsEvent("股市崩了", "经济", null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void should_update_rs_event_by_index() throws Exception {
         mockMvc.perform(get("/rs/event"))
                 .andExpect(status().isOk())

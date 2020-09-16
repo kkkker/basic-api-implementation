@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class RsEvent {
@@ -12,6 +13,8 @@ public class RsEvent {
 
     @NotEmpty
     private String keyword;
+
+    @NotNull
     private User user;
 
     public RsEvent() {
