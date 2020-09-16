@@ -11,9 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -81,7 +84,8 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
                 .andExpect(jsonPath("$[2].keyword", is("无分类")));
 
-        RsEvent rsEvent = new RsEvent("股市崩了", "经济");
+        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("股市崩了", "经济", user);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
@@ -96,8 +100,11 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[1].keyword", is("无分类")))
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
                 .andExpect(jsonPath("$[2].keyword", is("无分类")))
-                .andExpect(jsonPath("$[3].eventName", is("股市崩了")))
-                .andExpect(jsonPath("$[3].keyword", is("经济")));
+                .andExpect(jsonPath("$[3].eventName", is("股市崩了")));
+
+        List<User> newUserList = UserController.userList;
+        assertEquals(1, newUserList.size());
+        assertEquals(user, newUserList.get(0));
     }
 
     @Test
