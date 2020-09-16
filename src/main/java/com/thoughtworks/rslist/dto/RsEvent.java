@@ -1,7 +1,9 @@
 package com.thoughtworks.rslist.dto;
 
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -15,6 +17,7 @@ public class RsEvent {
     private String keyword;
 
     @NotNull
+    @Valid
     private User user;
 
     public RsEvent() {

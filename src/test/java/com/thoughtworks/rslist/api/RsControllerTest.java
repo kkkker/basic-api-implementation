@@ -167,6 +167,16 @@ class RsControllerTest {
     }
 
     @Test
+    void user_should_legal() throws Exception {
+        User user = new User("小王", 17, "female", "a@twu.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("股市崩了", "经济", user);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void should_update_rs_event_by_index() throws Exception {
         mockMvc.perform(get("/rs/event"))
                 .andExpect(status().isOk())
