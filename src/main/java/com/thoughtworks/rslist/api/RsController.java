@@ -48,7 +48,7 @@ public class RsController {
     }
     rsList.add(rsEvent);
     return ResponseEntity.status(201)
-            .header("index", String.valueOf(rsList.indexOf(rsEvent)))
+            .header("index", String.valueOf(rsList.indexOf(rsEvent) + 1))
             .build();
   }
 

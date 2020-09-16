@@ -91,7 +91,7 @@ class RsControllerTest {
         String json = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("index", is("3")));
+                .andExpect(header().string("index", is("4")));
 
         mockMvc.perform(get("/rs/event"))
                 .andExpect(status().isOk())
@@ -118,13 +118,13 @@ class RsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         User repeatedUser = new User("小王", 20, "male", "abc@twu.com", "18888988888");
         rsEvent = new RsEvent("猪肉涨价了", "民生", repeatedUser);
         json = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/rs/event"))
                 .andExpect(status().isOk())
