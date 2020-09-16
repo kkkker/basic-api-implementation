@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,5 +29,7 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/rs/add/user").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        assertEquals(1, UserController.userList.size());
+        assertEquals(user, UserController.userList.get(0));
     }
 }

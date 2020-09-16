@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    private List<User> userList = new ArrayList<>();
+    public static List<User> userList = new ArrayList<>();
 
     @PostMapping("/rs/add/user")
     public void registerUser(@RequestBody User user) {
