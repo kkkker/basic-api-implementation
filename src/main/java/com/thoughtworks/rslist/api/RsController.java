@@ -47,7 +47,9 @@ public class RsController {
       UserController.userList.add(rsEvent.getUser());
     }
     rsList.add(rsEvent);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.status(201)
+            .header("index", String.valueOf(rsList.indexOf(rsEvent)))
+            .build();
   }
 
   @PutMapping("/rs/update/event/{index}")
