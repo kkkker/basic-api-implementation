@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -24,6 +25,8 @@ public class User {
 
     @NotEmpty
     private String gender;
+
+    @Email
     private String email;
     private long phone;
 
