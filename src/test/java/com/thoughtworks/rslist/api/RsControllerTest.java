@@ -322,4 +322,11 @@ class RsControllerTest {
                 .andExpect(content().string("删除失败"));
     }
 
+    @Test
+    void should_checkout_start_and_end_when_get_rs_event_by_range() throws Exception {
+        mockMvc.perform(get("/rs/event?start=1&end=20"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid request param")));
+    }
+
 }
