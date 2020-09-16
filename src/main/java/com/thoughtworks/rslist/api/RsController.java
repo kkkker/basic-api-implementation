@@ -3,8 +3,11 @@ package com.thoughtworks.rslist.api;
 import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.exception.EventIndexException;
 import com.thoughtworks.rslist.exception.EventRangeException;
+import com.thoughtworks.rslist.exception.ExceptionMessage;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -82,5 +85,15 @@ public class RsController {
     }
     rsList.remove(index - 1);
     return ResponseEntity.ok().body("删除成功");
+  }
+
+  @ExceptionHandler({MethodArgumentNotValidException.class})
+  public ResponseEntity<ExceptionMessage> handleException(Exception ex) {
+    ExceptionMessage exceptionMessage = new ExceptionMessage();
+    if (ex instanceof MethodArgumentNotValidException) {
+      exceptionMessage.setError("invalid param");
+      return ResponseEntity.status(400).body(exceptionMessage);
+    }
+    return ResponseEntity.status(400).body(null);
   }
 }

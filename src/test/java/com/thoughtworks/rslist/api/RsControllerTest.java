@@ -336,4 +336,16 @@ class RsControllerTest {
                 .andExpect(jsonPath("$.error", is("invalid index")));
     }
 
+    @Test
+    void should_checkout_rs_event_when_add() throws Exception {
+
+        RsEvent rsEvent = new RsEvent("股市崩了", "经济", null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid param")));
+    }
+
 }
