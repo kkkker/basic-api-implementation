@@ -27,9 +27,7 @@ class UserControllerTest {
         User user = new User("小王", 19, "female", "a@twu.com", 18888888888L);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/add/user").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        assertEquals(1, UserController.userList.size());
-        assertEquals(user, UserController.userList.get(0));
     }
 }

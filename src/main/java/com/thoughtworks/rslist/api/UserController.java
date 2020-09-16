@@ -13,7 +13,7 @@ public class UserController {
 
     public static List<User> userList = new ArrayList<>();
 
-    @PostMapping("/rs/add/user")
+    @PostMapping("/user/register")
     public void registerUser(@RequestBody User user) {
         userList.add(user);
     }
