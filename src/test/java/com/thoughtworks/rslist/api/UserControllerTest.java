@@ -90,4 +90,13 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void phone_should_no_empty() throws Exception {
+        User user = new User("小王", 19, "female", "a@twu.com", null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }

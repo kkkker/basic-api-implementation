@@ -28,9 +28,11 @@ public class User {
 
     @Email
     private String email;
-    private long phone;
 
-    public User(String userName, Integer age, String gender, String email, long phone) {
+    @NotNull
+    private Long phone;
+
+    public User(String userName, Integer age, String gender, String email, Long phone) {
         this.userName = userName;
         this.age = age;
         this.gender = gender;
