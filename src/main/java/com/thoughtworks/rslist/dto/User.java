@@ -4,12 +4,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
 public class User {
 
     @NotEmpty
+    @Size(max = 8)
     private String userName;
     private int age;
     private String gender;
