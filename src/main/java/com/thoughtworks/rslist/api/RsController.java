@@ -41,7 +41,9 @@ public class RsController {
 
   @PostMapping("/rs/add/event")
   public void addOneRsEvent(@RequestBody RsEvent rsEvent) {
-    UserController.userList.add(rsEvent.getUser());
+    if (!UserController.userList.contains(rsEvent.getUser())) {
+      UserController.userList.add(rsEvent.getUser());
+    }
     rsList.add(rsEvent);
   }
 

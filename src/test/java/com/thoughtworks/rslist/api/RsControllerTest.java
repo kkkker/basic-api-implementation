@@ -100,7 +100,37 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[1].keyword", is("无分类")))
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
                 .andExpect(jsonPath("$[2].keyword", is("无分类")))
-                .andExpect(jsonPath("$[3].eventName", is("股市崩了")));
+                .andExpect(jsonPath("$[3].eventName", is("股市崩了")))
+                .andExpect(jsonPath("$[3].keyword", is("经济")));
+
+        List<User> newUserList = UserController.userList;
+        assertEquals(1, newUserList.size());
+        assertEquals(user, newUserList.get(0));
+    }
+
+    @Test
+    void should_no_register_user_when_user_name_exist() throws Exception {
+
+        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("股市崩了", "经济", user);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        User repeatedUser = new User("小王", 20, "male", "abc@twu.com", "18888988888");
+        rsEvent = new RsEvent("猪肉涨价了", "民生", repeatedUser);
+        json = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/rs/event"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[3].eventName", is("股市崩了")))
+                .andExpect(jsonPath("$[3].keyword", is("经济")))
+                .andExpect(jsonPath("$[4].eventName", is("猪肉涨价了")))
+                .andExpect(jsonPath("$[4].keyword", is("民生")));
 
         List<User> newUserList = UserController.userList;
         assertEquals(1, newUserList.size());
