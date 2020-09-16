@@ -2,9 +2,12 @@ package com.thoughtworks.rslist.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+
 @Data
 public class RsEvent {
 
+    @NotEmpty
     private String eventName;
     private String keyword;
     private User user;

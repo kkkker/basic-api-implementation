@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class RsController {
   }
 
   @PostMapping("/rs/add/event")
-  public void addOneRsEvent(@RequestBody RsEvent rsEvent) {
+  public void addOneRsEvent(@Valid @RequestBody RsEvent rsEvent) {
     if (!UserController.userList.contains(rsEvent.getUser())) {
       UserController.userList.add(rsEvent.getUser());
     }
