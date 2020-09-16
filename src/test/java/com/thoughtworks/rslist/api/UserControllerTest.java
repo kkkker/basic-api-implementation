@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
 
     @Autowired
@@ -29,5 +28,14 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void user_name_should_no_empty() throws Exception {
+        User user = new User("", 19, "female", "a@twu.com", 18888888888L);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
