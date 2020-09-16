@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,5 +130,17 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].user_gender", is("female")))
                 .andExpect(jsonPath("$[0].user_email", is("a@twu.com")))
                 .andExpect(jsonPath("$[0].user_phone", is("18888888888")));
+    }
+
+    @Test
+    void should_checkout_user_when_add() throws Exception {
+
+        User user = new User("小王", 19, "female", "@twu.com", "18888888888");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
 }
