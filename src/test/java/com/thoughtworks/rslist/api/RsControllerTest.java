@@ -97,7 +97,6 @@ class RsControllerTest {
         String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\"," +
                 "\"user\":{\"user_name\":\"小王\",\"user_age\":19,\"user_gender\":\"female\"," +
                 "\"user_email\":\"a@twu.com\",\"user_phone\":\"18888888888\"}}";
-        System.out.println(json);
         mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("index", is("4")));
