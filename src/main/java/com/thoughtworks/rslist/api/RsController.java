@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -45,8 +44,8 @@ public class RsController {
     rsList.add(rsEvent);
   }
 
-  @PutMapping("/rs/update/event")
-  public String updateRsEventByIndex(@RequestParam Integer index, @RequestBody RsEvent rsEvent) {
+  @PutMapping("/rs/update/event/{index}")
+  public String updateRsEventByIndex(@PathVariable Integer index, @RequestBody RsEvent rsEvent) {
     if (index == null || rsList.size() < index) {
       return "更新失败";
     }
@@ -60,8 +59,8 @@ public class RsController {
     return "更新成功";
   }
 
-  @DeleteMapping("/rs/delete/event")
-  public String deleteRsEventByIndex(@RequestParam(required = false) Integer index) {
+  @DeleteMapping("/rs/delete/event/{index}")
+  public String deleteRsEventByIndex(@PathVariable Integer index) {
     if (index == null || rsList.size() < index) {
       return "删除失败";
     }
