@@ -42,6 +42,17 @@ public class User {
     @JsonProperty("user_phone")
     private String phone;
 
+    @JsonIgnore
+    private int votes = 10;
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
+    }
+
     public User(String userName, Integer age, String gender, String email, String phone) {
         this.userName = userName;
         this.age = age;
