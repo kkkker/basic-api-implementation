@@ -22,10 +22,10 @@ public class RsEvent {
 
     @NotNull
     @JsonProperty("user_id")
-    private int userId;
+    private Integer userId;
 
     @JsonIgnore
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 

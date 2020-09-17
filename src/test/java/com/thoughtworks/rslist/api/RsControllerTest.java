@@ -141,35 +141,35 @@ class RsControllerTest {
         assertEquals(0, rsEventEntities.size());
     }
 
-    @Test
-    void should_no_register_user_when_user_name_exist() throws Exception {
-
-        String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\"," +
-                "\"user\":{\"user_name\":\"小王\",\"user_age\":19,\"user_gender\":\"female\"," +
-                "\"user_email\":\"a@twu.com\",\"user_phone\":\"18888888888\"}}";
-        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-
-        json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\"," +
-                "\"user\":{\"user_name\":\"小王\",\"user_age\":20,\"user_gender\":\"male\"," +
-                "\"user_email\":\"abc@twu.com\",\"user_phone\":\"18888988888\"}}";
-        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(5)))
-                .andExpect(jsonPath("$[3].eventName", is("股市崩了")))
-                .andExpect(jsonPath("$[3].keyword", is("经济")))
-                .andExpect(jsonPath("$[4].eventName", is("猪肉涨价了")))
-                .andExpect(jsonPath("$[4].keyword", is("民生")));
-
-        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
-        List<User> newUserList = UserController.userList;
-        assertEquals(1, newUserList.size());
-        assertEquals(user, newUserList.get(0));
-    }
-
+//    @Test
+//    void should_no_register_user_when_user_name_exist() throws Exception {
+//
+//        String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\"," +
+//                "\"user\":{\"user_name\":\"小王\",\"user_age\":19,\"user_gender\":\"female\"," +
+//                "\"user_email\":\"a@twu.com\",\"user_phone\":\"18888888888\"}}";
+//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isCreated());
+//
+//        json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\"," +
+//                "\"user\":{\"user_name\":\"小王\",\"user_age\":20,\"user_gender\":\"male\"," +
+//                "\"user_email\":\"abc@twu.com\",\"user_phone\":\"18888988888\"}}";
+//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isCreated());
+//
+//        mockMvc.perform(get("/rs/event"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$", hasSize(5)))
+//                .andExpect(jsonPath("$[3].eventName", is("股市崩了")))
+//                .andExpect(jsonPath("$[3].keyword", is("经济")))
+//                .andExpect(jsonPath("$[4].eventName", is("猪肉涨价了")))
+//                .andExpect(jsonPath("$[4].keyword", is("民生")));
+//
+//        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
+//        List<User> newUserList = UserController.userList;
+//        assertEquals(1, newUserList.size());
+//        assertEquals(user, newUserList.get(0));
+//    }
+//
 //    @Test
 //    void event_name_should_no_empty() throws Exception {
 //        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
@@ -211,31 +211,55 @@ class RsControllerTest {
 
     @Test
     void should_update_rs_event_by_index() throws Exception {
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无分类")));
 
-        RsEvent rsEvent = new RsEvent("股市崩了", "经济");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/rs/update/event/3").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("更新成功"));
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
 
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("股市崩了")))
-                .andExpect(jsonPath("$[2].keyword", is("经济")));
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        String json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\",\"user_id\":\"" + userEntity.getId() + "\"}";
+        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+                .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        List<RsEventEntity>rsEventEntities = rsEventRepository.findAll();
+        assertEquals(1, rsEventEntities.size());
+        assertEquals("猪肉涨价了", rsEventEntities.get(0).getEventName());
+        assertEquals("民生", rsEventEntities.get(0).getKeyword());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
+
+        json = "{\"keyword\":\"经济\",\"user_id\":\"" + userEntity.getId() + "\"}";
+        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+                .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        rsEventEntities = rsEventRepository.findAll();
+        assertEquals(1, rsEventEntities.size());
+        assertEquals("猪肉涨价了", rsEventEntities.get(0).getEventName());
+        assertEquals("经济", rsEventEntities.get(0).getKeyword());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
+
+        json = "{\"eventName\":\"股市涨了\",\"user_id\":\"" + userEntity.getId() + "\"}";
+        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+                .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        rsEventEntities = rsEventRepository.findAll();
+        assertEquals(1, rsEventEntities.size());
+        assertEquals("股市涨了", rsEventEntities.get(0).getEventName());
+        assertEquals("经济", rsEventEntities.get(0).getKeyword());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
     }
 
     @Test
