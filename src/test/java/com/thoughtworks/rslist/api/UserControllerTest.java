@@ -145,14 +145,24 @@ class UserControllerTest {
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
+        user = new User("小李", 20, "male", "b@twu.com", "18888888889");
+        json = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].user_name", is("小王")))
                 .andExpect(jsonPath("$[0].user_age", is(19)))
                 .andExpect(jsonPath("$[0].user_gender", is("female")))
                 .andExpect(jsonPath("$[0].user_email", is("a@twu.com")))
-                .andExpect(jsonPath("$[0].user_phone", is("18888888888")));
+                .andExpect(jsonPath("$[0].user_phone", is("18888888888")))
+                .andExpect(jsonPath("$[1].user_name", is("小李")))
+                .andExpect(jsonPath("$[1].user_age", is(20)))
+                .andExpect(jsonPath("$[1].user_gender", is("male")))
+                .andExpect(jsonPath("$[1].user_email", is("b@twu.com")))
+                .andExpect(jsonPath("$[1].user_phone", is("18888888889")));
     }
 
     @Test

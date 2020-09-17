@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -35,6 +36,13 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
+        List<User> userList = userRepository.findAll().stream()
+                .map(userEntity -> new User(userEntity.getUserName(),
+                        userEntity.getAge(),
+                        userEntity.getGender(),
+                        userEntity.getEmail(),
+                        userEntity.getPhone()))
+                .collect(Collectors.toList());
         return ResponseEntity.ok().body(userList);
     }
 
