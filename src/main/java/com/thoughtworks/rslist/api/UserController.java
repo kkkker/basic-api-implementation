@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 @RestController
 public class UserController {
 
-    public static List<User> userList = new ArrayList<>();
-
     @Autowired
     private UserRepository userRepository;
 
@@ -72,7 +70,6 @@ public class UserController {
                 .phone(user.getPhone())
                 .build();
         userRepository.save(userEntity);
-        userList.add(user);
         return ResponseEntity.ok().build();
     }
 
