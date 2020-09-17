@@ -3,15 +3,22 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.User;
+import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,6 +31,15 @@ class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @BeforeEach
+    public void setUp() {
+        userRepository.deleteAll();
+    }
+
+
     @Test
     void should_register_user() throws Exception {
         User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
@@ -31,6 +47,13 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(1, userEntityList.size());
+        assertEquals("小王", userEntityList.get(0).getUserName());
+        assertEquals(19, userEntityList.get(0).getAge());
+        assertEquals("female", userEntityList.get(0).getGender());
+        assertEquals("a@twu.com", userEntityList.get(0).getEmail());
+        assertEquals("18888888888", userEntityList.get(0).getPhone());
     }
 
     @Test
