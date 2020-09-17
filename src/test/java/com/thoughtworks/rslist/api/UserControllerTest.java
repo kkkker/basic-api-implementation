@@ -34,7 +34,7 @@ class UserControllerTest {
     }
 
     @Test
-    void user_name_should_no_empty() throws Exception {
+    void user_name_length_should_no_empty() throws Exception {
         User user = new User("", 19, "female", "a@twu.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(user);
