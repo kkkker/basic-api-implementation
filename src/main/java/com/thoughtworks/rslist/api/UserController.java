@@ -78,7 +78,9 @@ public class UserController {
 
     @DeleteMapping("/delete/user/{id}")
     public ResponseEntity<Object> registerUser(@PathVariable int id) {
-        userRepository.deleteById(id);
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+        }
         return ResponseEntity.ok().build();
     }
 

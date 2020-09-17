@@ -3,7 +3,9 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.dto.User;
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,9 +39,12 @@ class UserControllerTest {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RsEventRepository rsEventRepository;
 
     @BeforeEach
     public void setUp() {
+        rsEventRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -186,18 +192,27 @@ class UserControllerTest {
     }
 
     @Test
-    void should_delete_user_by_id() throws Exception {
-        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+    void should_delete_user_and_events_of_user_when_delete_user_by_id() throws Exception {
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
+
+        String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\",\"user_id\":\"" + userEntity.getId() + "\"}";
+        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+        mockMvc.perform(delete("/delete/user/" + userEntity.getId()))
                 .andExpect(status().isOk());
-        List<UserEntity> userEntityList = userRepository.findAll();
-        assertEquals(1, userEntityList.size());
-        mockMvc.perform(delete("/delete/user/1"))
-                .andExpect(status().isOk());
-        userEntityList = userRepository.findAll();
-        assertEquals(0, userEntityList.size());
+
+        List<UserEntity> userEntities = userRepository.findAll();
+        assertEquals(0, userEntities.size());
+
+        List<RsEventEntity> rsEventEntities = rsEventRepository.findAll();
+        assertEquals(0, rsEventEntities.size());
     }
 
     @Test
