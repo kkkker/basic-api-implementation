@@ -28,18 +28,10 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class RsController {
-  private List<RsEvent> rsList = initRsList();
-
-  private List<RsEvent> initRsList() {
-    List<RsEvent> tempRsList = new ArrayList<>();
-    tempRsList.add(new RsEvent("第一条事件", "无分类"));
-    tempRsList.add(new RsEvent("第二条事件", "无分类"));
-    tempRsList.add(new RsEvent("第三条事件", "无分类"));
-    return tempRsList;
-  }
 
   @Autowired
   RsEventRepository rsEventRepository;
@@ -49,15 +41,24 @@ public class RsController {
 
   @GetMapping("/rs/event/{index}")
   public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int index) throws EventIndexException {
-    if (index > rsList.size()) {
+    Optional<RsEventEntity> optionalRsEventEntity = rsEventRepository.findById(index);
+    if (!optionalRsEventEntity.isPresent()) {
       throw new EventIndexException();
     }
-    return ResponseEntity.ok().body(rsList.get(index - 1));
+    RsEventEntity rsEventEntity = optionalRsEventEntity.get();
+    return ResponseEntity.ok().body(new RsEvent(rsEventEntity.getEventName(),
+            rsEventEntity.getKeyword(),
+            rsEventEntity.getUserId()));
   }
 
   @GetMapping("/rs/event")
   public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
                                          @RequestParam(required = false) Integer end) throws EventRangeException {
+    List<RsEvent> rsList = rsEventRepository.findAll().stream()
+            .map(rsEventEntity -> new RsEvent(rsEventEntity.getEventName(),
+                    rsEventEntity.getKeyword(),
+                    rsEventEntity.getUserId()))
+            .collect(Collectors.toList());
     if (start == null || end == null) {
       return ResponseEntity.ok().body(rsList);
     }
@@ -110,11 +111,12 @@ public class RsController {
 
   @DeleteMapping("/rs/delete/event/{index}")
   public ResponseEntity<String> deleteRsEventByIndex(@PathVariable Integer index) {
-    if (index == null || rsList.size() < index) {
-      return ResponseEntity.ok().body("删除失败");
+    Optional<RsEventEntity> optionalRsEventEntity = rsEventRepository.findById(index);
+    if (!optionalRsEventEntity.isPresent()) {
+      return ResponseEntity.badRequest().build();
     }
-    rsList.remove(index - 1);
-    return ResponseEntity.ok().body("删除成功");
+    rsEventRepository.deleteById(index);
+    return ResponseEntity.ok().build();
   }
 
   @ExceptionHandler({MethodArgumentNotValidException.class})

@@ -55,41 +55,59 @@ class RsControllerTest {
 
     @Test
     void should_get_one_rs_event() throws Exception {
-        mockMvc.perform(get("/rs/event/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventName", is("第一条事件")))
-                .andExpect(jsonPath("$.keyword", is("无分类")));
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
 
-        mockMvc.perform(get("/rs/event/2"))
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+        mockMvc.perform(get("/rs/event/" + rsEventEntity.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventName", is("第二条事件")))
-                .andExpect(jsonPath("$.keyword", is("无分类")));
-
-        mockMvc.perform(get("/rs/event/3"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventName", is("第三条事件")))
-                .andExpect(jsonPath("$.keyword", is("无分类")));
+                .andExpect(jsonPath("$.eventName", is("股市崩了")))
+                .andExpect(jsonPath("$.keyword", is("经济")));
     }
 
     @Test
     void should_get_rs_event_by_range() throws Exception {
+
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
+
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+        rsEventEntity = RsEventEntity.builder()
+                .eventName("猪肉涨价了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
         mockMvc.perform(get("/rs/event?start=1&end=2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")));
-
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无分类")));
+                .andExpect(jsonPath("$[0].eventName", is("股市崩了")))
+                .andExpect(jsonPath("$[0].keyword", is("经济")))
+                .andExpect(jsonPath("$[1].eventName", is("猪肉涨价了")))
+                .andExpect(jsonPath("$[1].keyword", is("经济")));
     }
 
     @Test
