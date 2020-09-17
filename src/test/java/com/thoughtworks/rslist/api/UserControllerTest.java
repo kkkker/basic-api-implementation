@@ -156,6 +156,23 @@ class UserControllerTest {
     }
 
     @Test
+    void should_get_user_by_id() throws Exception {
+        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/user/1").content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user_name", is("小王")))
+                .andExpect(jsonPath("$.user_age", is(19)))
+                .andExpect(jsonPath("$.user_gender", is("female")))
+                .andExpect(jsonPath("$.user_email", is("a@twu.com")))
+                .andExpect(jsonPath("$.user_phone", is("18888888888")));
+    }
+
+    @Test
     void should_checkout_user_when_add() throws Exception {
 
         User user = new User("小王", 19, "female", "@twu.com", "18888888888");

@@ -3,7 +3,6 @@ package com.thoughtworks.rslist.api;
 import com.thoughtworks.rslist.dto.User;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.exception.ExceptionMessage;
-import com.thoughtworks.rslist.exception.HandleException;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -28,9 +29,28 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok().body(userList);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
+        if (!optionalUserEntity.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        UserEntity userEntity = optionalUserEntity.get();
+        User user = new User(userEntity.getUserName(),
+                userEntity.getAge(),
+                userEntity.getGender(),
+                userEntity.getEmail(),
+                userEntity.getPhone());
+        return ResponseEntity.ok().body(user);
     }
 
     @PostMapping("/user/register")
