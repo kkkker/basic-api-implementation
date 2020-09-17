@@ -112,7 +112,22 @@ class RsControllerTest {
 
     @Test
     void should_get_one_rs_event_without_user() throws Exception {
-        mockMvc.perform(get("/rs/event/1"))
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
+
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+        mockMvc.perform(get("/rs/event/" + rsEventEntity.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", not(hasKey("user"))));
     }
