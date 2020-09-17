@@ -68,6 +68,10 @@ public class RsController {
   @PostMapping("/rs/add/event")
   public ResponseEntity<Object> addOneRsEvent(@Valid @RequestBody RsEvent rsEvent) {
 
+    if (!userRepository.existsById(rsEvent.getUserId())) {
+      return ResponseEntity.status(400)
+              .build();
+    }
     RsEventEntity rsEventEntity = RsEventEntity.builder()
             .eventName(rsEvent.getEventName())
             .userId(rsEvent.getUserId())

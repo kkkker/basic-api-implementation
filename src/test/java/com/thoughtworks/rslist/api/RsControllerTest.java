@@ -129,6 +129,19 @@ class RsControllerTest {
     }
 
     @Test
+    void should_not_add_rs_event_when_user_not_exist() throws Exception {
+        List<RsEventEntity> rsEventEntities = rsEventRepository.findAll();
+        assertEquals(0, rsEventEntities.size());
+
+        String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\",\"user_id\":\"1\"}";
+        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        rsEventEntities = rsEventRepository.findAll();
+        assertEquals(0, rsEventEntities.size());
+    }
+
+    @Test
     void should_no_register_user_when_user_name_exist() throws Exception {
 
         String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\"," +
