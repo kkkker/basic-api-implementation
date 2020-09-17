@@ -4,6 +4,9 @@ import com.thoughtworks.rslist.dto.RsEvent;
 import com.thoughtworks.rslist.exception.EventIndexException;
 import com.thoughtworks.rslist.exception.EventRangeException;
 import com.thoughtworks.rslist.exception.ExceptionMessage;
+import com.thoughtworks.rslist.exception.HandleException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -90,10 +93,13 @@ public class RsController {
   @ExceptionHandler({MethodArgumentNotValidException.class})
   public ResponseEntity<ExceptionMessage> handleException(Exception ex) {
     ExceptionMessage exceptionMessage = new ExceptionMessage();
+    Logger logger = LoggerFactory.getLogger(RsController.class);
     if (ex instanceof MethodArgumentNotValidException) {
       exceptionMessage.setError("invalid param");
+      logger.error(exceptionMessage.getError());
       return ResponseEntity.status(400).body(exceptionMessage);
     }
+    logger.error(exceptionMessage.getError());
     return ResponseEntity.status(400).body(null);
   }
 }

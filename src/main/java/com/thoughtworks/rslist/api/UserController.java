@@ -2,6 +2,9 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.User;
 import com.thoughtworks.rslist.exception.ExceptionMessage;
+import com.thoughtworks.rslist.exception.HandleException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,8 +36,10 @@ public class UserController {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ExceptionMessage> handleException(Exception ex) {
         ExceptionMessage exceptionMessage = new ExceptionMessage();
+        Logger logger = LoggerFactory.getLogger(UserController.class);
         if (ex instanceof MethodArgumentNotValidException) {
             exceptionMessage.setError("invalid user");
+            logger.error(exceptionMessage.getError());
             return ResponseEntity.status(400).body(exceptionMessage);
         }
         return ResponseEntity.status(400).body(null);
