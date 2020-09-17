@@ -13,12 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
 
     @Autowired
@@ -180,6 +183,21 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.user_gender", is("female")))
                 .andExpect(jsonPath("$.user_email", is("a@twu.com")))
                 .andExpect(jsonPath("$.user_phone", is("18888888888")));
+    }
+
+    @Test
+    void should_delete_user_by_id() throws Exception {
+        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user/register").content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        List<UserEntity> userEntityList = userRepository.findAll();
+        assertEquals(1, userEntityList.size());
+        mockMvc.perform(delete("/delete/user/1"))
+                .andExpect(status().isOk());
+        userEntityList = userRepository.findAll();
+        assertEquals(0, userEntityList.size());
     }
 
     @Test

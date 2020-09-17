@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +73,12 @@ public class UserController {
                 .build();
         userRepository.save(userEntity);
         userList.add(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/delete/user/{id}")
+    public ResponseEntity<Object> registerUser(@PathVariable int id) {
+        userRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
