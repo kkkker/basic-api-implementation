@@ -1,12 +1,16 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.RsEvent;
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.exception.EventIndexException;
 import com.thoughtworks.rslist.exception.EventRangeException;
 import com.thoughtworks.rslist.exception.ExceptionMessage;
 import com.thoughtworks.rslist.exception.HandleException;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +39,12 @@ public class RsController {
     return tempRsList;
   }
 
+  @Autowired
+  RsEventRepository rsEventRepository;
+
+  @Autowired
+  UserRepository userRepository;
+
   @GetMapping("/rs/event/{index}")
   public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int index) throws EventIndexException {
     if (index > rsList.size()) {
@@ -57,12 +67,15 @@ public class RsController {
 
   @PostMapping("/rs/add/event")
   public ResponseEntity<Object> addOneRsEvent(@Valid @RequestBody RsEvent rsEvent) {
-    if (!UserController.userList.contains(rsEvent.getUser())) {
-      UserController.userList.add(rsEvent.getUser());
-    }
-    rsList.add(rsEvent);
+
+    RsEventEntity rsEventEntity = RsEventEntity.builder()
+            .eventName(rsEvent.getEventName())
+            .userId(rsEvent.getUserId())
+            .keyword(rsEvent.getKeyword())
+            .build();
+    rsEventRepository.save(rsEventEntity);
     return ResponseEntity.status(201)
-            .header("index", String.valueOf(rsList.indexOf(rsEvent) + 1))
+            .header("index", String.valueOf(rsEventRepository.findAll().indexOf(rsEventEntity) + 1))
             .build();
   }
 

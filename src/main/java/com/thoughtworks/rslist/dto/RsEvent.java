@@ -21,17 +21,17 @@ public class RsEvent {
     private String keyword;
 
     @NotNull
-    @Valid
-    private User user;
+    @JsonProperty("user_id")
+    private int userId;
 
     @JsonIgnore
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
     @JsonProperty
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public RsEvent() {
@@ -42,9 +42,9 @@ public class RsEvent {
         this.keyword = keyword;
     }
 
-    public RsEvent(String eventName, String keyword, User user) {
+    public RsEvent(String eventName, String keyword, int userId) {
         this.eventName = eventName;
         this.keyword = keyword;
-        this.user = user;
+        this.userId = userId;
     }
 }
