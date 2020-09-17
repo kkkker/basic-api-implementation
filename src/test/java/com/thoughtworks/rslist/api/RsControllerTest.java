@@ -328,6 +328,31 @@ class RsControllerTest {
     }
 
     @Test
+    void should_not_update_rs_event_by_empty_user_id() throws Exception {
+
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
+
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        String json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\"}";
+        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+                .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void should_delete_rs_event_by_index() throws Exception {
         mockMvc.perform(get("/rs/event"))
                 .andExpect(status().isOk())
