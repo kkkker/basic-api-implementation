@@ -43,7 +43,7 @@ public class User {
     private String phone;
 
     @JsonIgnore
-    private int votes;
+    private int votes = 10;
 
     public int getVotes() {
         return votes;
@@ -59,7 +59,6 @@ public class User {
         this.gender = gender;
         this.email = email;
         this.phone = phone;
-        this.votes = 10;
     }
 
     @Override

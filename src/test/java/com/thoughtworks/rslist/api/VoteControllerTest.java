@@ -19,9 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -55,6 +58,7 @@ class VoteControllerTest {
                 .gender("male")
                 .email("asda@tue.com")
                 .phone("15245852396")
+                .votes(10)
                 .build();
         userRepository.save(userEntity);
 
@@ -65,7 +69,7 @@ class VoteControllerTest {
                 .build();
         rsEventRepository.save(rsEventEntity);
 
-        VoteDto voteDto = new VoteDto(5, userEntity.getId(), "current time");
+        VoteDto voteDto = new VoteDto(5, rsEventEntity.getId(), userEntity.getId(), "current time");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(voteDto);
         mockMvc.perform(post("/rs/vote/" + rsEventEntity.getId())
@@ -98,7 +102,7 @@ class VoteControllerTest {
                 .build();
         rsEventRepository.save(rsEventEntity);
 
-        VoteDto voteDto = new VoteDto(15, userEntity.getId(), "current time");
+        VoteDto voteDto = new VoteDto(15, rsEventEntity.getId(), userEntity.getId(), "current time");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(voteDto);
         mockMvc.perform(post("/rs/vote/" + rsEventEntity.getId())
