@@ -233,29 +233,38 @@ class RsControllerTest {
                 .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        List<RsEventEntity>rsEventEntities = rsEventRepository.findAll();
+        List<RsEventEntity> rsEventEntities = rsEventRepository.findAll();
         assertEquals(1, rsEventEntities.size());
         assertEquals("猪肉涨价了", rsEventEntities.get(0).getEventName());
         assertEquals("民生", rsEventEntities.get(0).getKeyword());
         assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
+    }
 
-        json = "{\"keyword\":\"经济\",\"user_id\":\"" + userEntity.getId() + "\"}";
+    @Test
+    void should_update_rs_event_by_index_with_event_name() throws Exception {
+
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
+
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        String json = "{\"eventName\":\"股市涨了\",\"user_id\":\"" + userEntity.getId() + "\"}";
         mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
                 .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        rsEventEntities = rsEventRepository.findAll();
-        assertEquals(1, rsEventEntities.size());
-        assertEquals("猪肉涨价了", rsEventEntities.get(0).getEventName());
-        assertEquals("经济", rsEventEntities.get(0).getKeyword());
-        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
-
-        json = "{\"eventName\":\"股市涨了\",\"user_id\":\"" + userEntity.getId() + "\"}";
-        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
-                .content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        rsEventEntities = rsEventRepository.findAll();
+        List<RsEventEntity> rsEventEntities = rsEventRepository.findAll();
         assertEquals(1, rsEventEntities.size());
         assertEquals("股市涨了", rsEventEntities.get(0).getEventName());
         assertEquals("经济", rsEventEntities.get(0).getKeyword());
@@ -263,69 +272,38 @@ class RsControllerTest {
     }
 
     @Test
-    void should_update_rs_event_by_index_with_event_name() throws Exception {
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无分类")));
-
-        RsEvent rsEvent = new RsEvent("猪肉涨价了", null);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEvent);
-
-        mockMvc.perform(put("/rs/update/event/2").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("更新成功"));
-
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("猪肉涨价了")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无分类")));
-    }
-
-    @Test
     void should_update_rs_event_by_index_with_keyword() throws Exception {
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无分类")));
 
-        RsEvent rsEvent = new RsEvent(null, "政治");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/rs/update/event/1").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("更新成功"));
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
 
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("政治")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无分类")));
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        String json = "{\"keyword\":\"民生\",\"user_id\":\"" + userEntity.getId() + "\"}";
+        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+                .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        List<RsEventEntity> rsEventEntities = rsEventRepository.findAll();
+        assertEquals(1, rsEventEntities.size());
+        assertEquals("股市崩了", rsEventEntities.get(0).getEventName());
+        assertEquals("民生", rsEventEntities.get(0).getKeyword());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
     }
 
     @Test
     void should_not_update_rs_event_by_wrong_index() throws Exception {
-
 
         RsEvent rsEvent = new RsEvent("股市崩了", "经济");
         ObjectMapper objectMapper = new ObjectMapper();
