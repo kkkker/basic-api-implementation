@@ -5,7 +5,6 @@ import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.exception.EventIndexException;
 import com.thoughtworks.rslist.exception.EventRangeException;
 import com.thoughtworks.rslist.exception.ExceptionMessage;
-import com.thoughtworks.rslist.exception.HandleException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.slf4j.Logger;
@@ -24,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

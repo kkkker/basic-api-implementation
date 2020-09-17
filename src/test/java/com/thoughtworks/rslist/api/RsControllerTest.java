@@ -174,74 +174,6 @@ class RsControllerTest {
         assertEquals(0, rsEventEntities.size());
     }
 
-//    @Test
-//    void should_no_register_user_when_user_name_exist() throws Exception {
-//
-//        String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\"," +
-//                "\"user\":{\"user_name\":\"小王\",\"user_age\":19,\"user_gender\":\"female\"," +
-//                "\"user_email\":\"a@twu.com\",\"user_phone\":\"18888888888\"}}";
-//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isCreated());
-//
-//        json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\"," +
-//                "\"user\":{\"user_name\":\"小王\",\"user_age\":20,\"user_gender\":\"male\"," +
-//                "\"user_email\":\"abc@twu.com\",\"user_phone\":\"18888988888\"}}";
-//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isCreated());
-//
-//        mockMvc.perform(get("/rs/event"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$", hasSize(5)))
-//                .andExpect(jsonPath("$[3].eventName", is("股市崩了")))
-//                .andExpect(jsonPath("$[3].keyword", is("经济")))
-//                .andExpect(jsonPath("$[4].eventName", is("猪肉涨价了")))
-//                .andExpect(jsonPath("$[4].keyword", is("民生")));
-//
-//        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
-//        List<User> newUserList = UserController.userList;
-//        assertEquals(1, newUserList.size());
-//        assertEquals(user, newUserList.get(0));
-//    }
-//
-//    @Test
-//    void event_name_should_no_empty() throws Exception {
-//        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
-//        RsEvent rsEvent = new RsEvent("", "经济", user);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String json = objectMapper.writeValueAsString(rsEvent);
-//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    void keyword_should_no_empty() throws Exception {
-//        User user = new User("小王", 19, "female", "a@twu.com", "18888888888");
-//        RsEvent rsEvent = new RsEvent("股市崩了", "", user);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String json = objectMapper.writeValueAsString(rsEvent);
-//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    void user_should_no_empty() throws Exception {
-//        RsEvent rsEvent = new RsEvent("股市崩了", "经济", null);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String json = objectMapper.writeValueAsString(rsEvent);
-//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
-//    }
-//
-//    @Test
-//    void user_should_legal() throws Exception {
-//        User user = new User("小王", 17, "female", "a@twu.com", "18888888888");
-//        RsEvent rsEvent = new RsEvent("股市崩了", "经济", user);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String json = objectMapper.writeValueAsString(rsEvent);
-//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
-//    }
-
     @Test
     void should_update_rs_event_by_index() throws Exception {
 
@@ -414,8 +346,7 @@ class RsControllerTest {
     @Test
     void should_not_delete_rs_event_by_wrong_index() throws Exception {
         mockMvc.perform(delete("/rs/delete/event/4"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("删除失败"));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -431,17 +362,5 @@ class RsControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid index")));
     }
-
-//    @Test
-//    void should_checkout_rs_event_when_add() throws Exception {
-//
-//        RsEvent rsEvent = new RsEvent("股市崩了", "经济", null);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String json = objectMapper.writeValueAsString(rsEvent);
-//
-//        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$.error", is("invalid param")));
-//    }
 
 }
