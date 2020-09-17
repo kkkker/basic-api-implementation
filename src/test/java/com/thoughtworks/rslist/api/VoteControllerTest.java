@@ -78,4 +78,34 @@ class VoteControllerTest {
         assertEquals(voteDto.getVoteNum(), voteEntityList.get(0).getVoteNum());
         assertEquals(voteDto.getVoteTime(), voteEntityList.get(0).getVoteTime());
     }
+
+    @Test
+    void should_not_add_vote_when_voteNum_more_than_votes_of_user() throws Exception {
+
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
+
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        VoteDto voteDto = new VoteDto(15, userEntity.getId(), "current time");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(voteDto);
+        mockMvc.perform(post("/rs/vote/" + rsEventEntity.getId())
+                .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        List<VoteEntity> voteEntityList = voteRepository.findAll();
+        assertEquals(0, voteEntityList.size());
+    }
 }

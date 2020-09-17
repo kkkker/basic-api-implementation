@@ -37,7 +37,18 @@ public class UserEntity {
 
     private String phone;
 
+    private int votes;
+
     @OneToMany(mappedBy = "userId", cascade = CascadeType.REMOVE)
     private List<RsEventEntity> rsEventEntityList;
 
+    public UserEntity(Integer id, String userName, int age, String gender, String email, String phone) {
+        this.id = id;
+        this.userName = userName;
+        this.age = age;
+        this.gender = gender;
+        this.email = email;
+        this.phone = phone;
+        this.votes = 10;
+    }
 }

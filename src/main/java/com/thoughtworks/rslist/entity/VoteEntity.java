@@ -31,4 +31,7 @@ public class VoteEntity {
 
     @Column(name = "vote_time")
     private String voteTime;
+
+    @Column(name = "rs_event_id")
+    private int rsEventId;
 }
