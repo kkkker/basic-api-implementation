@@ -387,27 +387,28 @@ class RsControllerTest {
 
     @Test
     void should_delete_rs_event_by_index() throws Exception {
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无分类")));
 
-        mockMvc.perform(delete("/rs/delete/event/3"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("删除成功"));
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
 
-        mockMvc.perform(get("/rs/event"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无分类")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无分类")));
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        assertEquals(1, rsEventRepository.findAll().size());
+        mockMvc.perform(delete("/rs/delete/event/" + rsEventEntity.getId()))
+                .andExpect(status().isOk());
+
+        assertEquals(0, rsEventRepository.findAll().size());
     }
 
     @Test
