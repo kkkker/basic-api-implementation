@@ -303,15 +303,28 @@ class RsControllerTest {
     }
 
     @Test
-    void should_not_update_rs_event_by_wrong_index() throws Exception {
+    void should_not_update_rs_event_by_wrong_user_id() throws Exception {
 
-        RsEvent rsEvent = new RsEvent("股市崩了", "经济");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(rsEvent);
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .build();
+        userRepository.save(userEntity);
 
-        mockMvc.perform(put("/rs/update/event/4").content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("更新失败"));
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userId(userEntity.getId())
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        String json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\",\"user_id\":\"" + 100 + "\"}";
+        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+                .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
