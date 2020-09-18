@@ -25,13 +25,8 @@ import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
-
     @Autowired
     private UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
