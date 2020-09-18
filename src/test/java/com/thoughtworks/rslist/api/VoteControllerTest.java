@@ -88,6 +88,7 @@ class VoteControllerTest {
                 .gender("male")
                 .email("asda@tue.com")
                 .phone("15245852396")
+                .votes(10)
                 .build();
         userRepository.save(userEntity);
 

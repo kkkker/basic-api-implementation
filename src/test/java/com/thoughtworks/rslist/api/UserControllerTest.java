@@ -63,6 +63,7 @@ class UserControllerTest {
         assertEquals("female", userEntityList.get(0).getGender());
         assertEquals("a@twu.com", userEntityList.get(0).getEmail());
         assertEquals("18888888888", userEntityList.get(0).getPhone());
+        assertEquals(10, userEntityList.get(0).getVotes());
     }
 
     @Test
