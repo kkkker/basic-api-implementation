@@ -43,7 +43,7 @@ public class User {
     private String phone;
 
     @JsonIgnore
-    private int votes = 10;
+    private int votes;
 
     public int getVotes() {
         return votes;

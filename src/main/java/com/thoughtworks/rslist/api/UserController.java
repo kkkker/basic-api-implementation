@@ -62,10 +62,12 @@ public class UserController {
 
     @PostMapping("/user/register")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody User user) {
+        final int DEFAULT_VOTES = 10;
         UserEntity userEntity = UserEntity.builder()
                 .userName(user.getUserName())
                 .age(user.getAge())
                 .gender(user.getGender())
+                .votes(DEFAULT_VOTES)
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .build();
