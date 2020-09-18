@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,10 +85,7 @@ public class RsController {
   }
 
   @PutMapping("/rs/update/event/{id}")
-  public ResponseEntity<Object> updateRsEventByIndex(@PathVariable Integer id, @RequestBody RsEvent rsEvent) {
-    if (rsEvent == null || rsEvent.getUserId() == null) {
-      return ResponseEntity.badRequest().build();
-    }
+  public ResponseEntity<Object> updateRsEventByIndex(@PathVariable Integer id,@NotEmpty @RequestBody RsEvent rsEvent) {
     Optional<RsEventEntity> optionalRsEventEntity = rsEventRepository.findById(id);
     if (!optionalRsEventEntity.isPresent()) {
       return ResponseEntity.badRequest().build();
@@ -96,14 +94,18 @@ public class RsController {
     if (rsEventEntity.getUserId() != rsEvent.getUserId()) {
       return ResponseEntity.badRequest().build();
     }
+    updateRsEvent(rsEventEntity, rsEvent);
+    rsEventRepository.save(rsEventEntity);
+    return ResponseEntity.ok().build();
+  }
+
+  void updateRsEvent(RsEventEntity rsEventEntity, RsEvent rsEvent) {
     if (rsEvent.getKeyword() != null) {
       rsEventEntity.setKeyword(rsEvent.getKeyword());
     }
     if (rsEvent.getEventName() != null) {
       rsEventEntity.setEventName(rsEvent.getEventName());
     }
-    rsEventRepository.save(rsEventEntity);
-    return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/rs/delete/event/{index}")
