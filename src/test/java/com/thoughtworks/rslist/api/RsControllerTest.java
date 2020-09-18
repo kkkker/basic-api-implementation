@@ -1,8 +1,5 @@
 package com.thoughtworks.rslist.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.rslist.dto.RsEvent;
-import com.thoughtworks.rslist.dto.User;
 import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.repository.RsEventRepository;
@@ -27,7 +24,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,7 +62,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -90,13 +86,13 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
         rsEventEntity = RsEventEntity.builder()
                 .eventName("猪肉涨价了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -123,7 +119,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -152,13 +148,13 @@ class RsControllerTest {
                 .andExpect(header().string("index",
                         is(String.valueOf(rsEventRepository.findAll().indexOf(new RsEventEntity("股市崩了",
                                 "经济",
-                                userEntity.getId())) + 1))));
+                                userEntity)) + 1))));
 
         rsEventEntities = rsEventRepository.findAll();
         assertEquals(1, rsEventEntities.size());
         assertEquals("股市崩了", rsEventEntities.get(0).getEventName());
         assertEquals("经济", rsEventEntities.get(0).getKeyword());
-        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserEntity().getId());
     }
 
     @Test
@@ -188,7 +184,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -202,7 +198,7 @@ class RsControllerTest {
         assertEquals(1, rsEventEntities.size());
         assertEquals("猪肉涨价了", rsEventEntities.get(0).getEventName());
         assertEquals("民生", rsEventEntities.get(0).getKeyword());
-        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserEntity().getId());
     }
 
     @Test
@@ -219,7 +215,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -233,7 +229,7 @@ class RsControllerTest {
         assertEquals(1, rsEventEntities.size());
         assertEquals("股市涨了", rsEventEntities.get(0).getEventName());
         assertEquals("经济", rsEventEntities.get(0).getKeyword());
-        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserEntity().getId());
     }
 
     @Test
@@ -250,7 +246,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -264,7 +260,7 @@ class RsControllerTest {
         assertEquals(1, rsEventEntities.size());
         assertEquals("股市崩了", rsEventEntities.get(0).getEventName());
         assertEquals("民生", rsEventEntities.get(0).getKeyword());
-        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserId());
+        assertEquals(userEntity.getId(), rsEventEntities.get(0).getUserEntity().getId());
     }
 
     @Test
@@ -281,7 +277,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -306,7 +302,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -331,7 +327,7 @@ class RsControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);

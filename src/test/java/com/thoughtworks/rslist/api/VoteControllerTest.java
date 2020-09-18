@@ -60,7 +60,8 @@ class VoteControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+//                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
@@ -93,7 +94,8 @@ class VoteControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-                .userId(userEntity.getId())
+//                .userId(userEntity.getId())
+                .userEntity(userEntity)
                 .keyword("经济")
                 .build();
         rsEventRepository.save(rsEventEntity);
