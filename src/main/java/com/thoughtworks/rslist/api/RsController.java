@@ -30,9 +30,9 @@ public class RsController {
     @Autowired
     RsEventService rsEventService;
 
-    @GetMapping("/rs/event/{index}")
-    public ResponseEntity<RsEvent> getOneRsEvent(@PathVariable int index) throws EventIndexException {
-        return ResponseEntity.ok().body(rsEventService.getRsEventById(index));
+    @GetMapping("/rs/event/{id}")
+    public ResponseEntity<RsEvent> getOneRsEventById(@PathVariable int id) throws EventIndexException {
+        return ResponseEntity.ok().body(rsEventService.getRsEventById(id));
     }
 
     @GetMapping("/rs/event")

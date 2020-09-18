@@ -48,9 +48,8 @@ class RsControllerTest {
         userRepository.deleteAll();
     }
 
-
     @Test
-    void should_get_one_rs_event() throws Exception {
+    void should_get_one_rs_event_by_id() throws Exception {
         UserEntity userEntity = UserEntity.builder()
                 .userName("小王")
                 .age(23)
