@@ -34,6 +34,9 @@ public class RsEventEntity {
 
     private String keyword;
 
+    @Column(name = "vote_number")
+    private int voteNum;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;

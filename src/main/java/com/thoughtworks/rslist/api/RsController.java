@@ -48,7 +48,9 @@ public class RsController {
         RsEventEntity rsEventEntity = optionalRsEventEntity.get();
         return ResponseEntity.ok().body(new RsEvent(rsEventEntity.getEventName(),
                 rsEventEntity.getKeyword(),
-                rsEventEntity.getUserEntity().getId()));
+                rsEventEntity.getUserEntity().getId(),
+                rsEventEntity.getVoteNum(),
+                rsEventEntity.getId()));
     }
 
     @GetMapping("/rs/event")
@@ -57,7 +59,9 @@ public class RsController {
         List<RsEvent> rsList = rsEventRepository.findAll().stream()
                 .map(rsEventEntity -> new RsEvent(rsEventEntity.getEventName(),
                         rsEventEntity.getKeyword(),
-                        rsEventEntity.getUserEntity().getId()))
+                        rsEventEntity.getUserEntity().getId(),
+                        rsEventEntity.getVoteNum(),
+                        rsEventEntity.getId()))
                 .collect(Collectors.toList());
         if (start == null || end == null) {
             return ResponseEntity.ok().body(rsList);
