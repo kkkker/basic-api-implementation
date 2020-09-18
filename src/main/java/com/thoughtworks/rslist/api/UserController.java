@@ -23,8 +23,11 @@ import java.util.Optional;
 @RestController
 public class UserController {
 
-    @Autowired
     private UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {

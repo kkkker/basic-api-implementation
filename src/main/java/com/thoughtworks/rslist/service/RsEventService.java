@@ -7,9 +7,6 @@ import com.thoughtworks.rslist.exception.EventIndexException;
 import com.thoughtworks.rslist.exception.EventRangeException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,14 +14,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-@Configuration
 public class RsEventService {
 
-    @Autowired
     RsEventRepository rsEventRepository;
 
-    @Autowired
     UserRepository userRepository;
+
+    public RsEventService(RsEventRepository rsEventRepository, UserRepository userRepository) {
+        this.rsEventRepository = rsEventRepository;
+        this.userRepository = userRepository;
+    }
 
     public RsEvent getRsEventById(int id) throws EventIndexException {
         Optional<RsEventEntity> optionalRsEventEntity = rsEventRepository.findById(id);

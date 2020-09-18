@@ -16,8 +16,11 @@ import java.util.List;
 @RestController
 public class VoteController {
 
-    @Autowired
     VoteService voteService;
+
+    public VoteController(VoteService voteService) {
+        this.voteService = voteService;
+    }
 
     @GetMapping("/rs/votes")
     ResponseEntity<List<VoteDto>> getVotingRecord(@RequestParam Long start,

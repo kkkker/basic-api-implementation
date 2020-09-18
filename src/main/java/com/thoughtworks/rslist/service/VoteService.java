@@ -17,14 +17,20 @@ import java.util.stream.Collectors;
 @Service
 public class VoteService {
 
-    @Autowired
     VoteRepository voteRepository;
 
-    @Autowired
     UserRepository userRepository;
 
-    @Autowired
     RsEventRepository rsEventRepository;
+
+
+    public VoteService(VoteRepository voteRepository,
+                       UserRepository userRepository,
+                       RsEventRepository rsEventRepository) {
+        this.userRepository = userRepository;
+        this.voteRepository = voteRepository;
+        this.rsEventRepository = rsEventRepository;
+    }
 
     public List<VoteDto> getVotingRecordByDateRange(Long start, Long end) {
         List<VoteEntity> voteEntityList = voteRepository.findAllByVoteDateBetween(start, end);

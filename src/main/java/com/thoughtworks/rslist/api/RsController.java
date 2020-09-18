@@ -28,8 +28,11 @@ import java.util.List;
 @RestController
 public class RsController {
 
-    @Autowired
     RsEventService rsEventService;
+
+    public RsController(RsEventService rsEventService) {
+        this.rsEventService = rsEventService;
+    }
 
     @GetMapping("/rs/event/{id}")
     public ResponseEntity<RsEvent> getOneRsEventById(@PathVariable int id) throws EventIndexException {
