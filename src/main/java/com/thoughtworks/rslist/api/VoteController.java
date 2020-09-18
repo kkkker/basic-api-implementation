@@ -1,8 +1,10 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.VoteDto;
+import com.thoughtworks.rslist.entity.RsEventEntity;
 import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.entity.VoteEntity;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,18 @@ public class VoteController {
 
     @Autowired
     VoteRepository voteRepository;
+
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RsEventRepository rsEventRepository;
 
     @PostMapping("/rs/vote/{rsEventId}")
     ResponseEntity<Object> voteByRsId(@PathVariable int rsEventId, @RequestBody VoteDto voteDto) {
         Optional<UserEntity> optionalUserEntity = userRepository.findById(voteDto.getUserId());
-        if (!optionalUserEntity.isPresent()) {
+        Optional<RsEventEntity> optionalRsEventEntity = rsEventRepository.findById(rsEventId);
+        if (!optionalUserEntity.isPresent() || !optionalRsEventEntity.isPresent()) {
             return ResponseEntity.status(400).build();
         }
         UserEntity userEntity = optionalUserEntity.get();
@@ -35,10 +42,10 @@ public class VoteController {
         userEntity.setVotes(userEntity.getVotes() - voteDto.getVoteNum());
         userRepository.save(userEntity);
         VoteEntity voteEntity = VoteEntity.builder()
-                .rsEventId(rsEventId)
+                .rsEventEntity(optionalRsEventEntity.get())
                 .voteTime(voteDto.getVoteTime())
                 .voteNum(voteDto.getVoteNum())
-                .userId(voteDto.getUserId())
+                .userEntity(optionalUserEntity.get())
                 .build();
         voteRepository.save(voteEntity);
         return ResponseEntity.ok().build();

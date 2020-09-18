@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -26,12 +28,14 @@ public class VoteEntity {
     @Column(name = "vote_number")
     private int voteNum;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 
     @Column(name = "vote_time")
     private String voteTime;
 
-    @Column(name = "rs_event_id")
-    private int rsEventId;
+    @ManyToOne
+    @JoinColumn(name = "rs_event_id")
+    private RsEventEntity rsEventEntity;
 }

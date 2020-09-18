@@ -60,7 +60,6 @@ class VoteControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-//                .userId(userEntity.getId())
                 .userEntity(userEntity)
                 .keyword("经济")
                 .build();
@@ -75,7 +74,7 @@ class VoteControllerTest {
 
         List<VoteEntity> voteEntityList = voteRepository.findAll();
         assertEquals(1, voteEntityList.size());
-        assertEquals(voteDto.getUserId(), voteEntityList.get(0).getUserId());
+        assertEquals(voteDto.getUserId(), voteEntityList.get(0).getUserEntity().getId());
         assertEquals(voteDto.getVoteNum(), voteEntityList.get(0).getVoteNum());
         assertEquals(voteDto.getVoteTime(), voteEntityList.get(0).getVoteTime());
     }
@@ -94,7 +93,6 @@ class VoteControllerTest {
 
         RsEventEntity rsEventEntity = RsEventEntity.builder()
                 .eventName("股市崩了")
-//                .userId(userEntity.getId())
                 .userEntity(userEntity)
                 .keyword("经济")
                 .build();
