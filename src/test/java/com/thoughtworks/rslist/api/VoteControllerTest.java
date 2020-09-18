@@ -89,9 +89,48 @@ class VoteControllerTest {
                 .build();
 
         voteRepository.save(voteEntity);
-        mockMvc.perform(get("/user/vote/" + userEntity.getId())
-                .param("start", "10000000000")
-                .param("end", String.valueOf(System.currentTimeMillis())))
+        mockMvc.perform(get("/user/vote/" + userEntity.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    void should_get_voting_record_by_rs_event_id() throws Exception {
+        UserEntity userEntity = UserEntity.builder()
+                .userName("小王")
+                .age(23)
+                .gender("male")
+                .email("asda@tue.com")
+                .phone("15245852396")
+                .votes(10)
+                .build();
+        userRepository.save(userEntity);
+
+        RsEventEntity rsEventEntity = RsEventEntity.builder()
+                .eventName("股市崩了")
+                .userEntity(userEntity)
+                .keyword("经济")
+                .build();
+        rsEventRepository.save(rsEventEntity);
+
+        VoteEntity voteEntity = VoteEntity.builder()
+                .voteDate(10000000L)
+                .userEntity(userEntity)
+                .rsEventEntity(rsEventEntity)
+                .voteNum(4)
+                .build();
+
+        voteRepository.save(voteEntity);
+
+        voteEntity = VoteEntity.builder()
+                .voteDate(System.currentTimeMillis())
+                .userEntity(userEntity)
+                .rsEventEntity(rsEventEntity)
+                .voteNum(4)
+                .build();
+
+        voteRepository.save(voteEntity);
+        mockMvc.perform(get("/rs/vote/" + rsEventEntity.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -132,7 +171,7 @@ class VoteControllerTest {
                 .build();
 
         voteRepository.save(voteEntity);
-        mockMvc.perform(get("/rs/vote")
+        mockMvc.perform(get("/rs/votes")
                 .param("start", "10000000000")
                 .param("end", String.valueOf(System.currentTimeMillis())))
                 .andExpect(status().isOk())

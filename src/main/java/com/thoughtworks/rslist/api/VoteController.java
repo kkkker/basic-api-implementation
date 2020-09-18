@@ -34,11 +34,26 @@ public class VoteController {
     @Autowired
     RsEventRepository rsEventRepository;
 
-    @GetMapping("/rs/vote")
+    @GetMapping("/rs/votes")
     ResponseEntity<List<VoteDto>> getVotingRecord(@RequestParam Long start,
                                                   @RequestParam Long end) {
         List<VoteEntity> voteEntityList = voteRepository.findAllByVoteDateBetween(start, end);
         List<VoteDto> voteDtoList = voteEntityList.stream()
+                .map(voteEntity -> VoteDto.builder()
+                        .voteDate(voteEntity.getVoteDate())
+                        .rsEventId(voteEntity.getRsEventEntity().getId())
+                        .userId(voteEntity.getUserEntity().getId())
+                        .voteNum(voteEntity.getVoteNum())
+                        .build())
+                .collect(Collectors.toList());
+        return  ResponseEntity.ok().body(voteDtoList);
+    }
+
+    @GetMapping("/rs/vote/{rsEventId}")
+    ResponseEntity<List<VoteDto>> getVotingRecord(@PathVariable int rsEventId) {
+        List<VoteEntity> voteEntityList = voteRepository.findAll();
+        List<VoteDto> voteDtoList = voteEntityList.stream()
+                .filter(voteEntity -> voteEntity.getRsEventEntity().getId() == rsEventId)
                 .map(voteEntity -> VoteDto.builder()
                         .voteDate(voteEntity.getVoteDate())
                         .rsEventId(voteEntity.getRsEventEntity().getId())
