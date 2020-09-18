@@ -49,6 +49,21 @@ public class VoteController {
         return  ResponseEntity.ok().body(voteDtoList);
     }
 
+    @GetMapping("/user/vote/{userId}")
+    ResponseEntity<List<VoteDto>> getVotingRecordByUserId(@PathVariable int userId) {
+        List<VoteEntity> voteEntityList = voteRepository.findAll();
+        List<VoteDto> voteDtoList = voteEntityList.stream()
+                .filter(voteEntity -> voteEntity.getUserEntity().getId() == userId)
+                .map(voteEntity -> VoteDto.builder()
+                        .voteDate(voteEntity.getVoteDate())
+                        .rsEventId(voteEntity.getRsEventEntity().getId())
+                        .userId(voteEntity.getUserEntity().getId())
+                        .voteNum(voteEntity.getVoteNum())
+                        .build())
+                .collect(Collectors.toList());
+        return  ResponseEntity.ok().body(voteDtoList);
+    }
+
     @PostMapping("/rs/vote/{rsEventId}")
     ResponseEntity<Object> voteByRsId(@PathVariable int rsEventId, @RequestBody VoteDto voteDto) {
         Optional<UserEntity> optionalUserEntity = userRepository.findById(voteDto.getUserId());
