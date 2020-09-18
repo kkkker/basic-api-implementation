@@ -65,7 +65,7 @@ class VoteControllerTest {
                 .build();
         rsEventRepository.save(rsEventEntity);
 
-        VoteDto voteDto = new VoteDto(5, rsEventEntity.getId(), userEntity.getId(), "current time");
+        VoteDto voteDto = new VoteDto(4, rsEventEntity.getId(), userEntity.getId(), "current time");
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(voteDto);
         mockMvc.perform(post("/rs/vote/" + rsEventEntity.getId())
@@ -77,6 +77,13 @@ class VoteControllerTest {
         assertEquals(voteDto.getUserId(), voteEntityList.get(0).getUserEntity().getId());
         assertEquals(voteDto.getVoteNum(), voteEntityList.get(0).getVoteNum());
         assertEquals(voteDto.getVoteTime(), voteEntityList.get(0).getVoteTime());
+
+        userEntity = userRepository.findById(voteDto.getUserId()).orElse(null);
+        assert userEntity != null;
+        assertEquals(6, userEntity.getVotes());
+        rsEventEntity = rsEventRepository.findById(voteDto.getRsEventId()).orElse(null);
+        assert rsEventEntity != null;
+        assertEquals(4, rsEventEntity.getVoteNum());
     }
 
     @Test

@@ -41,6 +41,9 @@ public class VoteController {
         }
         userEntity.setVotes(userEntity.getVotes() - voteDto.getVoteNum());
         userRepository.save(userEntity);
+        RsEventEntity rsEventEntity = optionalRsEventEntity.get();
+        rsEventEntity.setVoteNum(rsEventEntity.getVoteNum() + voteDto.getVoteNum());
+        rsEventRepository.save(rsEventEntity);
         VoteEntity voteEntity = VoteEntity.builder()
                 .rsEventEntity(optionalRsEventEntity.get())
                 .voteTime(voteDto.getVoteTime())
