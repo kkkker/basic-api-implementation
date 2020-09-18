@@ -9,12 +9,18 @@ import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class VoteController {
@@ -27,6 +33,21 @@ public class VoteController {
 
     @Autowired
     RsEventRepository rsEventRepository;
+
+    @GetMapping("/rs/vote")
+    ResponseEntity<List<VoteDto>> getVotingRecord(@RequestParam Long start,
+                                                  @RequestParam Long end) {
+        List<VoteEntity> voteEntityList = voteRepository.findAllByVoteDateBetween(start, end);
+        List<VoteDto> voteDtoList = voteEntityList.stream()
+                .map(voteEntity -> VoteDto.builder()
+                        .voteDate(voteEntity.getVoteDate())
+                        .rsEventId(voteEntity.getRsEventEntity().getId())
+                        .userId(voteEntity.getUserEntity().getId())
+                        .voteNum(voteEntity.getVoteNum())
+                        .build())
+                .collect(Collectors.toList());
+        return  ResponseEntity.ok().body(voteDtoList);
+    }
 
     @PostMapping("/rs/vote/{rsEventId}")
     ResponseEntity<Object> voteByRsId(@PathVariable int rsEventId, @RequestBody VoteDto voteDto) {
@@ -46,7 +67,7 @@ public class VoteController {
         rsEventRepository.save(rsEventEntity);
         VoteEntity voteEntity = VoteEntity.builder()
                 .rsEventEntity(optionalRsEventEntity.get())
-                .voteTime(voteDto.getVoteTime())
+                .voteDate(voteDto.getVoteDate())
                 .voteNum(voteDto.getVoteNum())
                 .userEntity(optionalUserEntity.get())
                 .build();

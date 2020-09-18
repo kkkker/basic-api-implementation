@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "vote")
@@ -32,8 +34,8 @@ public class VoteEntity {
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    @Column(name = "vote_time")
-    private String voteTime;
+    @Column(name = "vote_date")
+    private Long voteDate;
 
     @ManyToOne
     @JoinColumn(name = "rs_event_id")
