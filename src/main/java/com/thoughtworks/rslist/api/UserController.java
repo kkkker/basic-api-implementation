@@ -1,9 +1,8 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.dto.User;
-import com.thoughtworks.rslist.entity.UserEntity;
 import com.thoughtworks.rslist.exception.ExceptionMessage;
-import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,62 +17,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
+
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> userList = userRepository.findAll().stream()
-                .map(userEntity -> new User(userEntity.getUserName(),
-                        userEntity.getAge(),
-                        userEntity.getGender(),
-                        userEntity.getEmail(),
-                        userEntity.getPhone()))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok().body(userList);
+        return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id) {
-        Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
-        if (!optionalUserEntity.isPresent()) {
-            return ResponseEntity.badRequest().build();
-        }
-        UserEntity userEntity = optionalUserEntity.get();
-        User user = new User(userEntity.getUserName(),
-                userEntity.getAge(),
-                userEntity.getGender(),
-                userEntity.getEmail(),
-                userEntity.getPhone());
-        return ResponseEntity.ok().body(user);
+        Optional<User> optionalUser = userService.getUserById(id);
+        return optionalUser.map(user -> ResponseEntity.ok().body(user))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @PostMapping("/user/register")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody User user) {
-        final int DEFAULT_VOTES = 10;
-        UserEntity userEntity = UserEntity.builder()
-                .userName(user.getUserName())
-                .age(user.getAge())
-                .gender(user.getGender())
-                .votes(DEFAULT_VOTES)
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .build();
-        userRepository.save(userEntity);
+        if (!userService.registerUser(user)) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/delete/user/{id}")
-    public ResponseEntity<Object> registerUser(@PathVariable int id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
+    public ResponseEntity<Object> deleteUserById(@PathVariable int id) {
+        if (!userService.deleteUserById(id)) {
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
     }
