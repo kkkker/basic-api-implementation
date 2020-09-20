@@ -101,7 +101,7 @@ class RsControllerTest {
                 .build();
         rsEventRepository.save(rsEventEntity);
 
-        mockMvc.perform(get("/rs/event?start=1&end=2"))
+        mockMvc.perform(get("/rs/events?start=1&end=2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("股市崩了")))
@@ -153,7 +153,7 @@ class RsControllerTest {
         assertEquals(0, rsEventEntities.size());
 
         String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\",\"user_id\":\"" + userEntity.getId() + "\"}";
-        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("index",
                         is(String.valueOf(rsEventRepository.findAll().indexOf(new RsEventEntity("股市崩了",
@@ -173,7 +173,7 @@ class RsControllerTest {
         assertEquals(0, rsEventEntities.size());
 
         String json = "{\"eventName\":\"股市崩了\",\"keyword\":\"经济\",\"user_id\":\"1\"}";
-        mockMvc.perform(post("/rs/add/event").content(json).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/rs/event").content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         rsEventEntities = rsEventRepository.findAll();
@@ -201,7 +201,7 @@ class RsControllerTest {
         rsEventRepository.save(rsEventEntity);
 
         String json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\",\"user_id\":\"" + userEntity.getId() + "\"}";
-        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+        mockMvc.perform(put("/rs/event/" + rsEventEntity.getId())
                 .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -233,7 +233,7 @@ class RsControllerTest {
         rsEventRepository.save(rsEventEntity);
 
         String json = "{\"eventName\":\"股市涨了\",\"user_id\":\"" + userEntity.getId() + "\"}";
-        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+        mockMvc.perform(put("/rs/event/" + rsEventEntity.getId())
                 .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -265,7 +265,7 @@ class RsControllerTest {
         rsEventRepository.save(rsEventEntity);
 
         String json = "{\"keyword\":\"民生\",\"user_id\":\"" + userEntity.getId() + "\"}";
-        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+        mockMvc.perform(put("/rs/event/" + rsEventEntity.getId())
                 .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -297,7 +297,7 @@ class RsControllerTest {
         rsEventRepository.save(rsEventEntity);
 
         String json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\",\"user_id\":\"" + 100 + "\"}";
-        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+        mockMvc.perform(put("/rs/event/" + rsEventEntity.getId())
                 .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -323,7 +323,7 @@ class RsControllerTest {
         rsEventRepository.save(rsEventEntity);
 
         String json = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"民生\"}";
-        mockMvc.perform(put("/rs/update/event/" + rsEventEntity.getId())
+        mockMvc.perform(put("/rs/event/" + rsEventEntity.getId())
                 .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -349,7 +349,7 @@ class RsControllerTest {
         rsEventRepository.save(rsEventEntity);
 
         assertEquals(1, rsEventRepository.findAll().size());
-        mockMvc.perform(delete("/rs/delete/event/" + rsEventEntity.getId()))
+        mockMvc.perform(delete("/rs/event/" + rsEventEntity.getId()))
                 .andExpect(status().isOk());
 
         assertEquals(0, rsEventRepository.findAll().size());
@@ -357,13 +357,13 @@ class RsControllerTest {
 
     @Test
     void should_not_delete_rs_event_by_wrong_index() throws Exception {
-        mockMvc.perform(delete("/rs/delete/event/4"))
+        mockMvc.perform(delete("/rs/event/4"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void should_checkout_start_and_end_when_get_rs_event_by_range() throws Exception {
-        mockMvc.perform(get("/rs/event?start=1&end=20"))
+        mockMvc.perform(get("/rs/events?start=1&end=20"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid request param")));
     }

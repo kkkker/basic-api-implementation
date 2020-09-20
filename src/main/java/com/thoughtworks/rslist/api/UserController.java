@@ -41,7 +41,7 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/user")
     public ResponseEntity<Object> registerUser(@Valid @RequestBody User user) {
         if (!userService.registerUser(user)) {
             return ResponseEntity.badRequest().build();
@@ -49,7 +49,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/delete/user/{id}")
+    @DeleteMapping("/user/{id}")
     public ResponseEntity<Object> deleteUserById(@PathVariable int id) {
         if (!userService.deleteUserById(id)) {
             return ResponseEntity.badRequest().build();

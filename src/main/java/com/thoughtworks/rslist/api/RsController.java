@@ -39,14 +39,14 @@ public class RsController {
         return ResponseEntity.ok().body(rsEventService.getRsEventById(id));
     }
 
-    @GetMapping("/rs/event")
+    @GetMapping("/rs/events")
     public ResponseEntity<List<RsEvent>> getRsEventByRange(@RequestParam(required = false) Integer start,
                                                            @RequestParam(required = false) Integer end) throws EventRangeException {
         List<RsEvent> rsList = rsEventService.getRsEventByRange(start, end);
         return ResponseEntity.ok().body(rsList.subList(start - 1, end));
     }
 
-    @PostMapping("/rs/add/event")
+    @PostMapping("/rs/event")
     public ResponseEntity<Object> addOneRsEvent(@Valid @RequestBody RsEvent rsEvent) {
 
         int index = rsEventService.addOneRsEvent(rsEvent);
@@ -58,7 +58,7 @@ public class RsController {
                 .build();
     }
 
-    @PutMapping("/rs/update/event/{id}")
+    @PutMapping("/rs/event/{id}")
     public ResponseEntity<Object> updateRsEventByIndex(@PathVariable Integer id, @NotEmpty @RequestBody RsEvent rsEvent) {
         if (!rsEventService.updateRsEventByIndex(id, rsEvent)) {
             return ResponseEntity.badRequest().build();
@@ -68,7 +68,7 @@ public class RsController {
 
 
 
-    @DeleteMapping("/rs/delete/event/{index}")
+    @DeleteMapping("/rs/event/{index}")
     public ResponseEntity<String> deleteRsEventByIndex(@PathVariable Integer index) {
         if (!rsEventService.deleteRsEventByIndex(index)) {
             return ResponseEntity.badRequest().build();
